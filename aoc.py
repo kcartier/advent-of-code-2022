@@ -1,6 +1,55 @@
 ## ************************************************************************** ##
 ## **************                   FUNCTION                   ************** ##
 ## ************************************.************************************* ##
+def aoc_day_04():
+   """
+   Cleanup Assignments
+   """
+   # ---------------------------------------------------------------------------
+   log.info(">>> aoc_day_04()")
+   localpath = YAML_DOC['local_path']
+   filename = "aoc_input_day_04.txt"
+   aoc_file = open(f"{localpath}/{filename}", 'r')
+   lines = aoc_file.readlines()
+   aoc_file.close()
+
+   # lines = [ # For testing
+   #    "2-4,6-8",
+   #    "2-3,4-5",
+   #    "5-7,7-9",
+   #    "2-8,3-7",
+   #    "6-6,4-6",
+   #    "2-6,4-8"
+   # ]
+
+   # ----------------------------------------------------------------------
+   # Part 1 & Part 2
+   # ----------------------------------------------------------------------
+   fullycontained_count = 0
+   overlap_count = 0
+   for line in lines:
+      assignments = line.strip().split(sep=",")
+      elf_1_assgn = assignments[0].split(sep="-")
+      elf_2_assgn = assignments[1].split(sep="-")
+      if int(elf_1_assgn[1]) < int(elf_2_assgn[0]):
+         pass # Disjoint assignments
+      elif int(elf_2_assgn[1]) < int(elf_1_assgn[0]):
+         pass # Disjoint assignments
+      elif int(elf_1_assgn[0]) >= int(elf_2_assgn[0]) and int(elf_1_assgn[1]) <= int(elf_2_assgn[1]):
+         fullycontained_count += 1
+      elif int(elf_2_assgn[0]) >= int(elf_1_assgn[0]) and int(elf_2_assgn[1]) <= int(elf_1_assgn[1]):
+         fullycontained_count += 1
+      else:
+         overlap_count += 1 
+   print(f"overlap_count:        {overlap_count}")
+   print(f"fullycontained_count: {fullycontained_count}")
+   print(f"total:                {fullycontained_count+overlap_count}")
+   return
+
+
+## ************************************************************************** ##
+## **************                   FUNCTION                   ************** ##
+## ************************************.************************************* ##
 def aoc_day_03():
    """
    Rucksack Reorg
