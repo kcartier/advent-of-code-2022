@@ -1,6 +1,100 @@
 ## ************************************************************************** ##
 ## **************                   FUNCTION                   ************** ##
 ## ************************************.************************************* ##
+def aoc_day_05():
+   """
+   There are about 7,000 different ways to get an "off-by-one" error in this code ...
+   ... and I think I hit them all before arriving at a working solution
+   """
+   # ---------------------------------------------------------------------------
+   log.info(">>> aoc_day_05()")
+   localpath = YAML_DOC['local_path']
+   filename = "aoc_input_day_05.txt"
+   aoc_file = open(f"{localpath}/{filename}", 'r')
+   lines = aoc_file.readlines()
+   aoc_file.close()
+
+   stacks = []
+   procedures = []
+   for line in lines:
+      if 0 <= line.find('['):
+         stacks.append(line)
+      if 0 <= line.find('move'):
+         procedures.append(line)
+
+   # stacks = [ # For testing
+   #    "    [D]    ",    # 2
+   #    "[N] [C]    ",    # 1
+   #    "[Z] [M] [P]"     # 0
+   # ]
+
+   # procedures = [ # For testing
+   #    "move 1 from 2 to 1",
+   #    "move 3 from 1 to 3",
+   #    "move 2 from 2 to 1",
+   #    "move 1 from 1 to 2"  
+   # ]
+
+   new_procs = [] # count, src, tgt
+   for proc in procedures:
+      proc = proc.strip()
+      proc = proc.split()
+      new_procs.append((proc[1], proc[3], proc[5]))
+   procedures = new_procs
+
+   MAX_ROWS = 5
+   def top_crate(col): 
+      # Find the top crate in a given stack
+      for row in range(MAX_ROWS, -1, -1):
+         if crates_arr[row-1][col] != '_':
+            break
+      return max(0, row-1)
+
+   # ----------------------------------------------------------------------
+   # Part 1 
+   # ----------------------------------------------------------------------
+   max_stacks = 0
+   for stack in stacks:
+      crate_level = stack.strip()
+      stack_count = len(crate_level.split())
+      if max_stacks < stack_count:
+         max_stacks = stack_count
+   cols = max_stacks
+   crates_arr = [['_' for i in range(cols)] for j in range(MAX_ROWS)]
+
+   # Fill the array from the bottom to the top
+   stacks.reverse() 
+   row = -1
+   for crate_level in stacks:
+      row += 1
+      for col in range(0, (cols*4)-1):
+         if crate_level[col].isalpha():
+            crates_arr[row][int((col-1)/4)] = crate_level[col]
+
+   for proc in procedures:
+      count = int(proc[0])
+      src = int(proc[1])-1
+      tgt = int(proc[2])-1
+      for i in range(count):
+         src_top = top_crate(src)
+         tgt_top = top_crate(tgt)
+         crates_arr[tgt_top+1][tgt] = crates_arr[src_top][src]
+         crates_arr[src_top][src] = '_'
+      # print("\n")
+      # for row in range(MAX_ROWS):
+      #    print(f"{crates_arr[row]}")
+
+   top_crates = ""
+   for j in range(cols):
+      top_crates += crates_arr[top_crate(j)][j]
+   print(f"Top Crates: {top_crates}")
+
+   return
+
+
+## ************************************************************************** ##
+## **************                   FUNCTION                   ************** ##
+## ************************************.************************************* ##
 def aoc_day_04():
    """
    Cleanup Assignments
