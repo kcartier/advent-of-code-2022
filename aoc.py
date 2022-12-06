@@ -1,6 +1,61 @@
 ## ************************************************************************** ##
 ## **************                   FUNCTION                   ************** ##
 ## ************************************.************************************* ##
+def aoc_day_06():
+   """
+   Uniquer-Seeker ... cuz I just like saying it :>)
+   """
+   # ---------------------------------------------------------------------------
+   log.info(">>> aoc_day_06()")
+   localpath = YAML_DOC['local_path']
+   filename = "aoc_input_day_06.txt"
+   aoc_file = open(f"{localpath}/{filename}", 'r')
+   lines = aoc_file.readlines()
+   aoc_file.close()
+   buffers = []
+   buffer = ""
+   for line in lines:
+      buffer += line.strip()
+   buffers.append(buffer)
+   WINDOW_SIZE = 14
+
+   # buffers = [ 
+   #    # "mjqjpqmgbljsphdztnvjfqwrcgsmlb"
+   #    # "bvwbjplbgvbhsrlpgdmjqwftvncz"
+   #    # "nppdvjthqldpwncqszvftbrmjlhg"
+   #    "nznrnfrfntjfmvfwmzdfjlvtqnbhcprsg"
+   #    # "zcfzfwzzqfrljwzlrfnpqdbhtmscgvjw"
+   # ]
+
+   # ----------------------------------------------------------------------
+   # Part 1 & 2
+   # ----------------------------------------------------------------------
+   def uniquer_seeker(buf, width):
+      for i in range(len(buf)):
+         window = ""
+         for j in range(width):
+            if j == width-1:
+               return i+j+2 # Dup char NOT found in the window
+            elif  0 <= window.find(buf[i+j+1]): 
+               break # Dup char found, keep searching
+            window += buf[i+j+1]
+      return -1
+
+   marker_pos = -1
+   for buffer in buffers:
+      marker_pos = uniquer_seeker(buffer, WINDOW_SIZE)
+      print(f"buffer: {buffer[:10]}, marker_pos: {marker_pos}")
+   return
+
+
+
+
+
+
+
+## ************************************************************************** ##
+## **************                   FUNCTION                   ************** ##
+## ************************************.************************************* ##
 def aoc_day_05():
    """
    There are about 7,000 different ways to get an "off-by-one" error in this code ...
