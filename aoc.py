@@ -1,6 +1,171 @@
 ## ************************************************************************** ##
 ## **************                   FUNCTION                   ************** ##
 ## ************************************.************************************* ##
+def aoc_day_08():
+   """
+   ___
+   """
+   # ---------------------------------------------------------------------------
+   log.info(">>> aoc_day_08()")
+   localpath = YAML_DOC['local_path']
+   filename = "aoc_input_day_08.txt"
+   aoc_file = open(f"{localpath}/{filename}", 'r')
+   lines = aoc_file.readlines()
+   aoc_file.close()
+
+   # lines = [ # For practice & debug
+   #    "30373",
+   #    "25512",
+   #    "65332",
+   #    "33549",
+   #    "35390"
+   # ]
+
+   MAX_ROWS = len(lines) 
+   MAX_COLS = len(lines[0].strip())
+   print(f"MAX_ROWS: {MAX_ROWS}, MAX_COLS: {MAX_COLS}")
+
+   tree_grid = [[0 for j in range(MAX_COLS)] for i in range(MAX_ROWS)]
+   vis_grid = [[1 for j in range(MAX_COLS)] for i in range(MAX_ROWS)] # visible by default
+
+   # ----------------------------------------------------------------------
+   # Supporting functions & classes 
+   # ----------------------------------------------------------------------
+   def visibility(row, col, viewpoint):
+      is_visible = 1 # default 
+      if viewpoint == 'NORTH':
+         for i in range(row):
+            if tree_grid[row][col] > tree_grid[i][col]:
+               continue
+            else:
+               is_visible = 0 # vis blocked by taller tree to the NORTH
+               break
+      elif viewpoint == 'SOUTH':
+         for i in range(MAX_ROWS-1, row, -1):
+            if tree_grid[row][col] > tree_grid[i][col]:
+               continue
+            else:
+               is_visible = 0 # vis blocked by taller tree to the SOUTH
+               break
+      elif viewpoint == 'EAST':
+         for j in range(MAX_COLS-1, col, -1):
+            if tree_grid[row][col] > tree_grid[row][j]:
+               continue
+            else:
+               is_visible = 0 # vis blocked by taller tree to the EAST
+               break
+      elif viewpoint == 'WEST':
+         for j in range(col):
+            if tree_grid[row][col] > tree_grid[row][j]:
+               continue
+            else:
+               is_visible = 0 # vis blocked by taller tree to the WEST
+               break
+      return is_visible
+
+
+
+   def view_from_treehouse(row, col, direction):
+      tree_count = 0 # default 
+
+      if direction == 'NORTH': # How many trees until view is blocked?
+         for i in range(row-1, -1, -1):
+            tree_count += 1 
+            if tree_grid[row][col] > tree_grid[i][col]:
+               continue
+            else:
+               break # vis is blocked by tree
+      elif direction == 'SOUTH':
+         for i in range(row+1, MAX_ROWS):
+            tree_count += 1 
+            if tree_grid[row][col] > tree_grid[i][col]:
+               continue
+            else:
+               break # vis blocked by taller tree to the SOUTH
+      elif direction == 'EAST':
+         for j in range(col+1, MAX_COLS):
+            tree_count += 1 
+            if tree_grid[row][col] > tree_grid[row][j]:
+               continue
+            else:
+               break # vis blocked by taller tree to the EAST
+      elif direction == 'WEST':
+         for j in range(col-1, -1, -1):
+            tree_count += 1 
+            if tree_grid[row][col] > tree_grid[row][j]:
+               continue
+            else:
+               break # vis  blocked by taller tree to the WEST
+      return tree_count
+
+
+   # ----------------------------------------------------------------------
+   # Part 1 
+   # ----------------------------------------------------------------------
+   for i in range(MAX_ROWS):
+      for j in range(MAX_COLS):
+         line = lines[i].strip()
+         tree_grid[i][j] = line[j]
+
+   # for i in range(MAX_ROWS):
+   #    print(f"tree_grid[{i}]: {tree_grid[i]}")
+
+   # print("\n")      
+   # for i in range(MAX_ROWS):
+   #    print(f"vis_grid[{i}]: {vis_grid[i]}")
+
+   for i in range(MAX_ROWS):
+      for j in range(MAX_COLS):
+         vis_grid[i][j] = max(
+            visibility(i, j, "NORTH"),
+            visibility(i, j, "SOUTH"),
+            visibility(i, j, "EAST"),
+            visibility(i, j, "WEST")
+         )
+
+   # print("\n")      
+   # for i in range(MAX_ROWS):
+   #    print(f"vis_grid[{i}]: {vis_grid[i]}")
+
+   visible_tree_count = 0
+   for i in range(MAX_ROWS):
+      for j in range(MAX_COLS):
+         visible_tree_count += vis_grid[i][j]
+   print("\n")      
+   print(f"visible tree count: {visible_tree_count}")
+
+   # ----------------------------------------------------------------------
+   # Part 2
+   # ----------------------------------------------------------------------
+   for i in range(MAX_ROWS):
+      for j in range(MAX_COLS):
+         line = lines[i].strip()
+         tree_grid[i][j] = line[j]
+   view_grid = [[1 for j in range(MAX_COLS)] for i in range(MAX_ROWS)] # visible by default
+
+   for i in range(MAX_ROWS):
+      for j in range(MAX_COLS):
+         view_grid[i][j] = (
+            view_from_treehouse(i, j, "NORTH") *
+            view_from_treehouse(i, j, "SOUTH") *
+            view_from_treehouse(i, j, "EAST")  *
+            view_from_treehouse(i, j, "WEST")
+      )
+
+   max_score = 0
+   for i in range(MAX_ROWS):
+      for j in range(MAX_COLS):
+         if(max_score < view_grid[i][j]):
+            max_score = view_grid[i][j]
+   print("\n")      
+   print(f"max_score: {max_score}")
+
+   return
+
+
+## ************************************************************************** ##
+## **************                   FUNCTION                   ************** ##
+## ************************************.************************************* ##
 def aoc_day_06():
    """
    Uniquer-Seeker ... cuz I just like saying it :>)
